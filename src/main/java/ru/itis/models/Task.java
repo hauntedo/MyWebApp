@@ -12,5 +12,7 @@ public class Task {
     private Long id;
     private String title;
     private String description;
+    private TaskState taskState;
+    private Long userId;
 
 }

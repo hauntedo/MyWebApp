@@ -24,6 +24,10 @@ public class UserRepositoryImpl implements UserRepository {
     //language=SQL
     private static final String SQL_FIND_BY_EMAIL_AND_PASS = "select * from Users where email = ? and password = ?";
 
+    //language=SQL
+    private static final String SQL_UPDATE_USER = "update Users set firstName = ? and lastName = ? and password = ?" +
+            "age = ? and sex = ? where id = ?";
+
     private DataSource dataSource;
     private SimpleJdbcTemplate template;
 
@@ -50,7 +54,8 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public void update(User entity) {
-
+        template.update(SQL_UPDATE_USER, entity.getFirstName(), entity.getLastName(), entity.getPassword(),
+                entity.getAge(), entity.getSex(), entity.getId());
     }
 
     @Override
