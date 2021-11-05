@@ -3,6 +3,7 @@ package ru.itis.services;
 import ru.itis.models.Task;
 import ru.itis.repositories.TaskRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public class TaskServiceImpl implements TaskService{
@@ -31,5 +32,10 @@ public class TaskServiceImpl implements TaskService{
     @Override
     public Optional<Task> getTaskById(Long id) {
         return taskRepository.findById(id);
+    }
+
+    @Override
+    public List<Task> getAllTaskByEmployeeId(Long id) {
+        return taskRepository.findAllTaskByEmployeeId(id);
     }
 }

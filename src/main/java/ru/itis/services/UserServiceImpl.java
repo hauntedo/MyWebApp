@@ -3,6 +3,7 @@ package ru.itis.services;
 import ru.itis.models.User;
 import ru.itis.repositories.UserRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public class UserServiceImpl implements UserService {
@@ -36,5 +37,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<User> getUserByEmailAndPass(String email, String pass) {
         return userRepository.findFirstByEmailAndPassword(email, pass);
+    }
+
+    @Override
+    public List<User> getAllEmployeeByEmployerId(Long id) {
+        return userRepository.findAllEmployeeByEmployerId(id);
     }
 }

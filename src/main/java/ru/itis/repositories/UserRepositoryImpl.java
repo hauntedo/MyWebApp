@@ -1,5 +1,7 @@
 package ru.itis.repositories;
 
+import ru.itis.models.Task;
+import ru.itis.models.TaskState;
 import ru.itis.models.User;
 
 import javax.sql.DataSource;
@@ -28,6 +30,13 @@ public class UserRepositoryImpl implements UserRepository {
     private static final String SQL_UPDATE_USER = "update Users set firstName = ? and lastName = ? and password = ?" +
             "age = ? and sex = ? where id = ?";
 
+    //language=SQL
+    private static final String SQL_FIND_BY_EMAIL = "select * from users where email = ?";
+
+    //language=SQL
+    private static final String SQL_FIND_ALL_EMPLOYEE_BY_ID = "select * from Users inner join Relation R on Users.id = " +
+            "R.employee_id where employer_id = ?";
+
     private DataSource dataSource;
     private SimpleJdbcTemplate template;
 
@@ -40,22 +49,19 @@ public class UserRepositoryImpl implements UserRepository {
             .id(row.getLong("id"))
             .firstName(row.getString("firstName"))
             .lastName(row.getString("lastName"))
-            .age(row.getInt("age"))
-            .sex(row.getBoolean("sex"))
             .email(row.getString("email"))
             .password(row.getString("password"))
             .build();
 
     @Override
     public void save(User entity) {
-        template.update(SQL_INSERT_USER, entity.getFirstName(), entity.getLastName(), entity.getAge(), entity.getSex(),
-                entity.getEmail(), entity.getPassword());
+            template.update(SQL_INSERT_USER, entity.getFirstName(), entity.getLastName(),
+                    entity.getEmail(), entity.getPassword());
     }
 
     @Override
     public void update(User entity) {
-        template.update(SQL_UPDATE_USER, entity.getFirstName(), entity.getLastName(), entity.getPassword(),
-                entity.getAge(), entity.getSex(), entity.getId());
+        template.update(SQL_UPDATE_USER, entity.getFirstName(), entity.getLastName(), entity.getPassword(), entity.getId());
     }
 
     @Override
@@ -80,4 +86,18 @@ public class UserRepositoryImpl implements UserRepository {
         List<User> users = template.query(SQL_FIND_BY_EMAIL_AND_PASS, userRowMapper, email, pass);
         return users.isEmpty()?Optional.empty():Optional.of(users.get(0));
     }
+
+    @Override
+    public Optional<User> findByEmail(String email) {
+        List<User> users = template.query(SQL_FIND_BY_EMAIL, userRowMapper, email);
+        return users.isEmpty()?Optional.empty():Optional.of(users.get(0));
+    }
+
+    @Override
+    public List<User> findAllEmployeeByEmployerId(Long id) {
+        List<User> users = template.query(SQL_FIND_ALL_EMPLOYEE_BY_ID, userRowMapper, id);
+        return users.isEmpty()?null:users;
+    }
+
+
 }

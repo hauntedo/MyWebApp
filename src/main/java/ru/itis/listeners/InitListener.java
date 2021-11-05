@@ -2,14 +2,18 @@ package ru.itis.listeners;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import ru.itis.repositories.UserRepository;
+import ru.itis.repositories.UserRepositoryImpl;
+import ru.itis.services.SecurityService;
+import ru.itis.services.SecurityServiceImpl;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
+import javax.servlet.*;
+import javax.servlet.annotation.WebListener;
 import java.io.IOException;
 import java.util.Properties;
 
-public class WebListener implements ServletContextListener {
+@WebListener
+public class InitListener implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
@@ -30,6 +34,11 @@ public class WebListener implements ServletContextListener {
         HikariDataSource dataSource = new HikariDataSource(hikariConfig);
 
         servletContext.setAttribute("dataSource", dataSource);
+
+        UserRepository userRepository = new UserRepositoryImpl(dataSource);
+        SecurityService securityService = new SecurityServiceImpl(userRepository);
+
+        servletContext.setAttribute("securityService", securityService);
     }
 
     @Override

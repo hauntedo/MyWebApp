@@ -2,6 +2,7 @@ package ru.itis.models;
 
 import lombok.*;
 
+
 @Getter
 @Setter
 @EqualsAndHashCode
@@ -9,12 +10,11 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class User {
+public class Job {
 
     private Long id;
-    private String firstName;
-    private String lastName;
-    private String email;
-    private String password;
-
+    private String title;
+    private String description;
+    private Long employerId;
+    private boolean active;
 }

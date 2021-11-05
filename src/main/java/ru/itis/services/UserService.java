@@ -2,6 +2,7 @@ package ru.itis.services;
 
 import ru.itis.models.User;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
@@ -11,5 +12,6 @@ public interface UserService {
     void updateUser(User u);
     Optional<User> getUserById(Long id);
     Optional<User> getUserByEmailAndPass(String email, String pass);
+    List<User> getAllEmployeeByEmployerId(Long id);
 
 }

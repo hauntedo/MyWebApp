@@ -27,6 +27,9 @@ public class TaskRepositoryImpl implements TaskRepository {
     private static final String SQL_UPDATE_TASK = "update Tasks set title = ? and description = ? and task_state = ? " +
             "and employee_id = ? where id = ?";
 
+    //language=SQL
+    private static final String SQL_FIND_TASK_BY_EMPLOYEE_ID = "select * from Tasks where employee_id = ?";
+
     private SimpleJdbcTemplate template;
     private DataSource dataSource;
 
@@ -69,5 +72,12 @@ public class TaskRepositoryImpl implements TaskRepository {
     public Optional<Task> findById(Long id) {
         List<Task> tasks = template.query(SQL_FIND_BY_ID, taskRowMapper, id);
         return tasks.isEmpty()?Optional.empty():Optional.of(tasks.get(0));
+    }
+
+
+    @Override
+    public List<Task> findAllTaskByEmployeeId(Long id) {
+        List<Task> tasks = template.query(SQL_FIND_TASK_BY_EMPLOYEE_ID, taskRowMapper, id);
+        return tasks.isEmpty()?null:tasks;
     }
 }
