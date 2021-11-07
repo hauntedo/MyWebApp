@@ -6,12 +6,13 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <html>
 <head>
-    <title>Title</title>
+    <title>Регистрация</title>
 </head>
 <body>
-<form action="/signUp" method="post">
+<form action="/signUp"method="post">
     <div class="container">
         <hr>
         <p>Пожалуйста, заполните эту форму, чтобы создать учетную запись.</p>

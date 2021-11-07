@@ -1,7 +1,8 @@
 package ru.itis.servlets;
 
-import ru.itis.services.UserService;
-import ru.itis.services.UserServiceImpl;
+import ru.itis.models.Task;
+import ru.itis.repositories.TaskRepository;
+import ru.itis.services.TaskService;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -11,21 +12,23 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
-@WebServlet("/profile")
-public class ProfileServlet extends HttpServlet {
+@WebServlet
+public class TaskServlet extends HttpServlet {
 
-    private UserService userService;
+    private TaskService taskService;
     private ServletContext context;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         context = config.getServletContext();
-        userService = (UserService) context.getAttribute("userService");
+        taskService = (TaskService) context.getAttribute("taskRepository");
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.getRequestDispatcher("/WEB-INF/views/profile.jsp").forward(req,resp);
+        List<Task> tasks = taskService.getAllTaskByEmployeeId(Long.valueOf(req.getParameter("id")));
+        req.getRequestDispatcher("/WEB-INF/views/task.jsp");
     }
 }

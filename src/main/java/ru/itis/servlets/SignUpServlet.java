@@ -27,7 +27,7 @@ public class SignUpServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.getRequestDispatcher("/jsp/signUp.jsp").forward(req,resp);
+        context.getRequestDispatcher("/WEB-INF/views/signUp.jsp").forward(req,resp);
     }
 
     @Override
@@ -38,16 +38,18 @@ public class SignUpServlet extends HttpServlet {
                     .lastName(req.getParameter("lname"))
                     .email(req.getParameter("email"))
                     .password(req.getParameter("psw"))
+                    .token("some")
                     .build();
             try {
                 securityService.signUp(user);
-                resp.sendRedirect("/signIn");
+                resp.sendRedirect(req.getContextPath() + "/signIn");
+                return;
             } catch (InvalidEmailException e) {
                 req.setAttribute("message", "Неверный email");
             }
         } else {
             req.setAttribute("message", "Пароли не совпадают");
         }
-        req.getRequestDispatcher("/jsp/signUp.jsp").forward(req,resp);
+        resp.sendRedirect(context.getContextPath()+"/signUp");
     }
 }

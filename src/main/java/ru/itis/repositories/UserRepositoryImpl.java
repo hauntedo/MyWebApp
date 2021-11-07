@@ -14,8 +14,8 @@ public class UserRepositoryImpl implements UserRepository {
     private static final String SQL_FIND_ALL = "select * from Users";
 
     //language=SQL
-    private static final String SQL_INSERT_USER = "insert into Users(firstName, lastName, age, sex, email, password)" +
-            "values (?,?,?,?,?,?,?)";
+    private static final String SQL_INSERT_USER = "insert into Users(firstName, lastName, email, password)" +
+            "values (?,?,?,?)";
 
     //language=SQL
     private static final String SQL_DELETE_USER = "delete from Users where id=?";
@@ -28,10 +28,13 @@ public class UserRepositoryImpl implements UserRepository {
 
     //language=SQL
     private static final String SQL_UPDATE_USER = "update Users set firstName = ? and lastName = ? and password = ?" +
-            "age = ? and sex = ? where id = ?";
+            " where id = ?";
 
     //language=SQL
     private static final String SQL_FIND_BY_EMAIL = "select * from users where email = ?";
+
+    //language=SQL
+    private static final String SQL_FIND_BY_TOKEN = "select * from users where token = ?";
 
     //language=SQL
     private static final String SQL_FIND_ALL_EMPLOYEE_BY_ID = "select * from Users inner join Relation R on Users.id = " +
@@ -51,6 +54,7 @@ public class UserRepositoryImpl implements UserRepository {
             .lastName(row.getString("lastName"))
             .email(row.getString("email"))
             .password(row.getString("password"))
+            .token(row.getString("token"))
             .build();
 
     @Override
@@ -97,6 +101,12 @@ public class UserRepositoryImpl implements UserRepository {
     public List<User> findAllEmployeeByEmployerId(Long id) {
         List<User> users = template.query(SQL_FIND_ALL_EMPLOYEE_BY_ID, userRowMapper, id);
         return users.isEmpty()?null:users;
+    }
+
+    @Override
+    public Optional<User> findByToken(String s) {
+        List<User> users = template.query(SQL_FIND_BY_TOKEN, userRowMapper, s);
+        return users.isEmpty()?Optional.empty():Optional.of(users.get(0));
     }
 
 

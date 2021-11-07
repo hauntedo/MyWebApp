@@ -25,19 +25,23 @@ public class SignInServlet extends HttpServlet {
         securityService = (SecurityService) context.getAttribute("securityService");
     }
 
+
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.getRequestDispatcher("/jsp/signIn.jsp").forward(req,resp);
+        context.getRequestDispatcher("/WEB-INF/views/signIn.jsp").forward(req,resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
             securityService.signIn(req.getParameter("email"), req.getParameter("psw"));
-            resp.sendRedirect("/profile");
+            resp.sendRedirect(context.getContextPath() + "/profile");
+            return;
         } catch (NoSuchLoginException | WrongPasswordException e) {
             req.setAttribute("message", "Неверный логин или пароль");
         }
-        req.getRequestDispatcher("/jsp/signIn.jsp").forward(req,resp);
+        resp.sendRedirect(req.getContextPath() + "/signIn");
     }
+
 }

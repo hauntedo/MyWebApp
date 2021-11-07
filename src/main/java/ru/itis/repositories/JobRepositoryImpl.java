@@ -18,7 +18,7 @@ public class JobRepositoryImpl implements JobRepository {
             "and active = ? where id = ?";
 
     //language=SQL
-    private static final String SQL_DELETE_JOB = "delete from Jobs where id = ?";
+    private static final String SQL_DELETE_JOB = "update Jobs set active = ? where id = ?";
 
     //language=SQL
     private static final String SQL_FIND_ALL = "select * from Jobs";
@@ -57,7 +57,7 @@ public class JobRepositoryImpl implements JobRepository {
 
     @Override
     public void delete(Job entity) {
-        template.update(SQL_DELETE_JOB, entity.getId());
+        template.update(SQL_DELETE_JOB, false, entity.getId());
     }
 
     @Override
@@ -69,6 +69,6 @@ public class JobRepositoryImpl implements JobRepository {
     @Override
     public Optional<Job> findById(Long id) {
         List<Job> jobs = template.query(SQL_FIND_BY_ID, jobRowMapper, id);
-        return jobs.isEmpty()?Optional.empty():Optional.of(jobs.get(0));пше
+        return jobs.isEmpty()?Optional.empty():Optional.of(jobs.get(0));
     }
 }

@@ -2,10 +2,8 @@ package ru.itis.listeners;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import ru.itis.repositories.UserRepository;
-import ru.itis.repositories.UserRepositoryImpl;
-import ru.itis.services.SecurityService;
-import ru.itis.services.SecurityServiceImpl;
+import ru.itis.repositories.*;
+import ru.itis.services.*;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebListener;
@@ -13,15 +11,16 @@ import java.io.IOException;
 import java.util.Properties;
 
 @WebListener
-public class InitListener implements ServletContextListener {
+public class ServletListener implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
         ServletContext servletContext = servletContextEvent.getServletContext();
 
         Properties properties = new Properties();
+        System.out.println(servletContext);
         try {
-            properties.load(servletContext.getResourceAsStream("src\\resources\\application.properties"));
+            properties. load(servletContext.getResourceAsStream("WEB-INF/properties/db.properties"));
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
@@ -36,13 +35,24 @@ public class InitListener implements ServletContextListener {
         servletContext.setAttribute("dataSource", dataSource);
 
         UserRepository userRepository = new UserRepositoryImpl(dataSource);
+        JobRepository jobRepository = new JobRepositoryImpl(dataSource);
         SecurityService securityService = new SecurityServiceImpl(userRepository);
+        TaskRepository taskRepository = new TaskRepositoryImpl(dataSource);
 
+        UserService userService = new UserServiceImpl(userRepository);
+        TaskService taskService = new TaskServiceImpl(taskRepository);
+        JobService jobService = new JobServiceImpl(jobRepository);
+
+        servletContext.setAttribute("taskService", taskService);
+        servletContext.setAttribute("userService", userService);
+        servletContext.setAttribute("jobService", jobService);
         servletContext.setAttribute("securityService", securityService);
     }
 
     @Override
     public void contextDestroyed(ServletContextEvent servletContextEvent) {
-
+        ServletContext servletContext = servletContextEvent.getServletContext();
+        HikariDataSource hikariDataSource = (HikariDataSource) servletContext.getAttribute("dataSource");
+        hikariDataSource.close();
     }
 }
