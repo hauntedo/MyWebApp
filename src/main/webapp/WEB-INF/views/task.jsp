@@ -19,8 +19,8 @@
         <div class="twrap"><div class="tmove">
             <c:forEach items="${tasks}" var="task">
                 <div class="titem">
-                    <span class="title">Название: ${task.title}</span>
-                    <span class="description">Описание: ${task.description}</span>
+                    <span class="title">${task.title}</span>
+                    <span class="description">${task.description}</span>
                 </div>
                 <form method="get">
                     <div class="row">
