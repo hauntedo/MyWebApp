@@ -79,7 +79,7 @@ public class SimpleJdbcTemplate {
 
             return result;
         } catch (SQLException e) {
-            throw new IllegalStateException(e);
+             throw new IllegalStateException(e);
         } finally {
             if (statement != null) {
                 try {

@@ -12,11 +12,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
 
-@WebServlet("/jobs")
-public class JobServlet extends HttpServlet {
+@WebServlet("/jobs/createJob")
+public class CreateJobServlet extends HttpServlet {
 
     private JobService jobService;
     private ServletContext context;
@@ -29,26 +27,33 @@ public class JobServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        context.getRequestDispatcher("/WEB-INF/views/createJobs.jsp").forward(req, resp);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String action = req.getParameter("action");
-        if (action != null) {
+
+        if (action!=null) {
             switch (action) {
-                case "add":
-                    resp.sendRedirect(context.getContextPath()+"/jobs/createJob");
-                    return;
-                case "respond":
+                case "save":
                     User u = (User) req.getSession().getAttribute("user");
-                    String employerId = req.getParameter("id");
-                    try {
-                        jobService.createRelation(u.getId(), Long.valueOf(employerId));
-                    } catch (IllegalStateException e) {
-                        throw new IllegalStateException("Ошибка " + e);
-                    }
+                    Job job = Job.builder()
+                            .title(req.getParameter("title"))
+                            .description(req.getParameter("desc"))
+                            .employerId(u.getId())
+                            .active(true)
+                            .build();
+                    jobService.createJob(job);
+                    req.setAttribute("userId", u.getId());
+                    resp.sendRedirect(context.getContextPath()+"/jobs");
+                    return;
+
+                case "cancel":
                     resp.sendRedirect(context.getContextPath()+"/jobs");
                     return;
             }
         }
-        List<Job> jobs = jobService.getAllByActive(true);
-        req.setAttribute("jobs", jobs);
-        context.getRequestDispatcher("/WEB-INF/views/job.jsp").forward(req,resp);
+        context.getRequestDispatcher("/WEB-INF/views/job.jsp").forward(req, resp);
     }
 }

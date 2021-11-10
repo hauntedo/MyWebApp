@@ -1,5 +1,6 @@
 package ru.itis.servlets;
 
+import ru.itis.services.SecurityService;
 import ru.itis.services.UserService;
 import ru.itis.services.UserServiceImpl;
 
@@ -16,16 +17,30 @@ import java.io.IOException;
 public class ProfileServlet extends HttpServlet {
 
     private UserService userService;
+    private SecurityService securityService;
     private ServletContext context;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         context = config.getServletContext();
         userService = (UserService) context.getAttribute("userService");
+        securityService = (SecurityService) context.getAttribute("securityService");
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.getRequestDispatcher("/WEB-INF/views/profile.jsp").forward(req,resp);
+        String action = req.getParameter("action");
+        if (action != null) {
+            switch (action) {
+                case "change":
+                    resp.sendRedirect(context.getContextPath() + "/profile/change");
+                    return;
+                case "quit":
+                    securityService.signOut(req, resp);
+                    resp.sendRedirect(context.getContextPath()+"/signIn");
+                    return;
+            }
+        }
+        context.getRequestDispatcher("/WEB-INF/views/profile.jsp").forward(req,resp);
     }
 }

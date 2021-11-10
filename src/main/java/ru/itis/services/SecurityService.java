@@ -3,6 +3,7 @@ package ru.itis.services;
 import ru.itis.models.User;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 public interface SecurityService {
@@ -11,5 +12,5 @@ public interface SecurityService {
     void signIn(String email, String password, HttpSession session);
     boolean isAuth(HttpServletRequest request, HttpSession session);
     void validateEmail(String email);
-    void signOut();
+    void signOut(HttpServletRequest request, HttpServletResponse response);
 }

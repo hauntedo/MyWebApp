@@ -30,6 +30,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Optional<User> getByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    @Override
     public Optional<User> getUserById(Long id) {
         return userRepository.findById(id);
     }
@@ -43,4 +48,15 @@ public class UserServiceImpl implements UserService {
     public List<User> getAllEmployeeByEmployerId(Long id) {
         return userRepository.findAllEmployeeByEmployerId(id);
     }
+
+    @Override
+    public String getTokenByUser(User u) {
+        return userRepository.findToken(u);
+    }
+
+    @Override
+    public Optional<User> getUserByToken(String token) {
+        return userRepository.findByToken(token);
+    }
+
 }

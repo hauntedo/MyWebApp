@@ -10,8 +10,11 @@ public interface UserService {
     void createUser(User u);
     void deleteUser(User u);
     void updateUser(User u);
+    Optional<User> getByEmail(String email);
     Optional<User> getUserById(Long id);
     Optional<User> getUserByEmailAndPass(String email, String pass);
     List<User> getAllEmployeeByEmployerId(Long id);
+    String getTokenByUser(User u);
+    Optional<User> getUserByToken(String token);
 
 }

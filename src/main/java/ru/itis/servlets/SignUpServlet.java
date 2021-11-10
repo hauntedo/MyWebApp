@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.UUID;
 
 @WebServlet("/signUp")
 public class SignUpServlet extends HttpServlet {
@@ -33,15 +34,16 @@ public class SignUpServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (req.getParameter("psw").equals(req.getParameter("psw-repeat"))) {
+            UUID uuid = UUID.randomUUID();
             User user = User.builder()
                     .firstName(req.getParameter("fname"))
                     .lastName(req.getParameter("lname"))
                     .email(req.getParameter("email"))
                     .password(req.getParameter("psw"))
-                    .token("some")
+                    .token(uuid.toString())
                     .build();
             try {
-                securityService.signUp(user);
+                securityService.signUp(user, req.getSession());
                 resp.sendRedirect(req.getContextPath() + "/signIn");
                 return;
             } catch (InvalidEmailException e) {

@@ -12,6 +12,6 @@ public interface TaskService {
     void updateTask(Task t);
     void deleteTask(Task t);
     Optional<Task> getTaskById(Long id);
-    List<Task> getAllTaskByEmployeeId(Long id);
+    List<Task> getAllTaskByEmployerId(Long id);
 
 }

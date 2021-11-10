@@ -9,8 +9,10 @@ import ru.itis.repositories.UserRepository;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -54,7 +56,7 @@ public class SecurityServiceImpl implements SecurityService {
         if (cookies != null) {
             for (Cookie c : cookies) {
                 if (c.getName().equals("user")) {
-                    Optional<User> u = userRepository.findById(Long.valueOf(c.getValue()));
+                    Optional<User> u = userRepository.findByToken(c.getValue());
                     if (u.isPresent()) {
                         session.setAttribute("user", u);
                         return true;
@@ -77,7 +79,17 @@ public class SecurityServiceImpl implements SecurityService {
     }
 
     @Override
-    public void signOut() {
-
+    public void signOut(HttpServletRequest request, HttpServletResponse response) {
+        request.getSession().removeAttribute("user");
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie c : cookies) {
+                if (c.getName().equals("user")) {
+                    c.setMaxAge(0);
+                    response.addCookie(c);
+                    return;
+                }
+            }
+        }
     }
 }

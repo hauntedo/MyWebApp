@@ -12,4 +12,6 @@ public interface JobService {
     void deleteJob(Job j);
     List<Job> getAllJobs();
     Optional<Job> getById(Long id);
+    List<Job> getAllByActive(Boolean active);
+    void createRelation(Long employeeId, Long employerId);
 }

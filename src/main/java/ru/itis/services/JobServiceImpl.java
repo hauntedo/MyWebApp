@@ -38,4 +38,14 @@ public class JobServiceImpl implements JobService {
     public Optional<Job> getById(Long id) {
         return jobRepository.findById(id);
     }
+
+    @Override
+    public List<Job> getAllByActive(Boolean active) {
+        return jobRepository.findAllByActive(active);
+    }
+
+    @Override
+    public void createRelation(Long employeeId, Long employerId) {
+        jobRepository.saveRelation(employeeId, employerId);
+    }
 }

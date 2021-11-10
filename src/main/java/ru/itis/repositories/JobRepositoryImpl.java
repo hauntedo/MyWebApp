@@ -24,7 +24,13 @@ public class JobRepositoryImpl implements JobRepository {
     private static final String SQL_FIND_ALL = "select * from Jobs";
 
     //language=SQL
+    private static final String SQL_FIND_ALL_BY_ACTIVE = "select * from Jobs where active = ?";
+
+    //language=SQL
     private static final String SQL_FIND_BY_ID = "select * from Jobs where id = ?";
+
+    //language=SQL
+    private static final String SQL_ADD_RELATION = "insert into Relation(employee_id, employer_id) values (?,?)";
 
     private SimpleJdbcTemplate template;
     private DataSource dataSource;
@@ -70,5 +76,17 @@ public class JobRepositoryImpl implements JobRepository {
     public Optional<Job> findById(Long id) {
         List<Job> jobs = template.query(SQL_FIND_BY_ID, jobRowMapper, id);
         return jobs.isEmpty()?Optional.empty():Optional.of(jobs.get(0));
+    }
+
+
+    @Override
+    public List<Job> findAllByActive(Boolean active) {
+        List<Job> jobs = template.query(SQL_FIND_ALL_BY_ACTIVE, jobRowMapper, active);
+        return jobs.isEmpty()?null:jobs;
+    }
+
+    @Override
+    public void saveRelation(Long employeeId, Long employerId) {
+        template.update(SQL_ADD_RELATION, employeeId, employerId);
     }
 }

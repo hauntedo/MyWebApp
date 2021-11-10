@@ -5,8 +5,12 @@ import ru.itis.models.TaskState;
 import ru.itis.models.User;
 
 import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public class UserRepositoryImpl implements UserRepository {
 
@@ -14,8 +18,8 @@ public class UserRepositoryImpl implements UserRepository {
     private static final String SQL_FIND_ALL = "select * from Users";
 
     //language=SQL
-    private static final String SQL_INSERT_USER = "insert into Users(firstName, lastName, email, password)" +
-            "values (?,?,?,?)";
+    private static final String SQL_INSERT_USER = "insert into Users(firstName, lastName, email, password, token)" +
+            "values (?,?,?,?,?)";
 
     //language=SQL
     private static final String SQL_DELETE_USER = "delete from Users where id=?";
@@ -24,14 +28,17 @@ public class UserRepositoryImpl implements UserRepository {
     private static final String SQL_FIND_BY_ID = "select * from Users where id = ?";
 
     //language=SQL
-    private static final String SQL_FIND_BY_EMAIL_AND_PASS = "select * from Users where email = ? and password = ?";
+    private static final String SQL_FIND_BY_EMAIL_AND_PASS = "select * from Users where email = ?, password = ?";
 
     //language=SQL
-    private static final String SQL_UPDATE_USER = "update Users set firstName = ? and lastName = ? and password = ?" +
+    private static final String SQL_UPDATE_USER = "update Users set firstName = ?, lastName = ?, password = ?" +
             " where id = ?";
 
     //language=SQL
     private static final String SQL_FIND_BY_EMAIL = "select * from users where email = ?";
+
+    //language=SQL
+    private static final String SQL_FIND_TOKEN = "select * from Users where id = ?";
 
     //language=SQL
     private static final String SQL_FIND_BY_TOKEN = "select * from users where token = ?";
@@ -59,8 +66,9 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public void save(User entity) {
+        UUID uuid = UUID.randomUUID();
             template.update(SQL_INSERT_USER, entity.getFirstName(), entity.getLastName(),
-                    entity.getEmail(), entity.getPassword());
+                    entity.getEmail(), entity.getPassword(), uuid.toString());
     }
 
     @Override
@@ -104,9 +112,21 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public Optional<User> findByToken(String s) {
-        List<User> users = template.query(SQL_FIND_BY_TOKEN, userRowMapper, s);
+    public String findToken(User u) {
+        List<User> users = template.query(SQL_FIND_TOKEN, userRowMapper, u.getId());
+        return users.isEmpty()?null:users.get(0).getToken();
+    }
+
+    @Override
+    public Optional<User> findByToken(String token) {
+        List<User> users = template.query(SQL_FIND_BY_TOKEN, userRowMapper, token);
         return users.isEmpty()?Optional.empty():Optional.of(users.get(0));
+    }
+
+    @Override
+    public void save(User u, UUID uuid) {
+        template.update(SQL_INSERT_USER, u.getFirstName(), u.getLastName(),
+                u.getEmail(), u.getPassword(), uuid.toString());
     }
 
 
